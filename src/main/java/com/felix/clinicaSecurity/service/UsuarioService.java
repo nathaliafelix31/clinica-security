@@ -1,9 +1,13 @@
 package com.felix.clinicaSecurity.service;
 
+import com.felix.clinicaSecurity.datatables.Datatables;
+import com.felix.clinicaSecurity.datatables.DatatablesColunas;
 import com.felix.clinicaSecurity.domain.Perfil;
 import com.felix.clinicaSecurity.domain.Usuario;
 import com.felix.clinicaSecurity.repository.UsuarioRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,12 +17,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UsuarioService implements UserDetailsService {
 
     @Autowired
     private UsuarioRepository repository;
+
+    @Autowired
+    private Datatables datatables;
 
     @Transactional (readOnly = true)
     public Usuario buscarPorEmail(String email){
@@ -44,6 +52,16 @@ public class UsuarioService implements UserDetailsService {
             authorities[i] = perfis.get(i).getDesc();
         }
         return authorities;
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> buscarTodos(HttpServletRequest request) {
+        datatables.setRequest(request);
+        datatables.setColunas(DatatablesColunas.USUARIOS);
+        Page<Usuario> page = datatables.getSearch().isEmpty()
+                ? repository.findAll(datatables.getPageable())
+                : repository.findByEmailOrPerfil(datatables.getSearch(), datatables.getPageable());
+        return datatables.getResponse(page);
     }
 
 }
