@@ -9,8 +9,10 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Arrays;
@@ -30,18 +32,20 @@ public class UsuarioController {
         return "usuario/cadastro";
     }
 
-    //abrir lista de usuarios
+    // abrir lista de usuarios
     @GetMapping("/lista")
-    public String listarUsuarios(){
+    public String listarUsuarios() {
+
         return "usuario/lista";
     }
 
-    //listar usuarios na datatables
+    // listar usuarios na datatables
     @GetMapping("/datatables/server/usuarios")
-    public ResponseEntity<?> listarUsuariosDatatables(HttpServletRequest request){
+    public ResponseEntity<?> listarUsuariosDatatables(HttpServletRequest request) {
 
         return ResponseEntity.ok(service.buscarTodos(request));
     }
+
 
     // salvar cadastro de usuarios por administrador
     @PostMapping("/cadastro/salvar")
@@ -62,6 +66,13 @@ public class UsuarioController {
             }
         }
         return "redirect:/u/novo/cadastro/usuario";
+    }
+
+    // pre edicao de credenciais de usuarios
+    @GetMapping("/editar/credenciais/usuario/{id}")
+    public ModelAndView preEditarCredenciais(@PathVariable("id") Long id) {
+
+        return new ModelAndView("usuario/cadastro", "usuario", service.buscarPorId(id));
     }
 
 }
