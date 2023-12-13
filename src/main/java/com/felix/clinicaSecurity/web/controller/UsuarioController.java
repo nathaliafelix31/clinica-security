@@ -1,6 +1,7 @@
 package com.felix.clinicaSecurity.web.controller;
 
 import com.felix.clinicaSecurity.domain.Perfil;
+import com.felix.clinicaSecurity.domain.PerfilTipo;
 import com.felix.clinicaSecurity.domain.Usuario;
 import com.felix.clinicaSecurity.service.UsuarioService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -74,5 +75,34 @@ public class UsuarioController {
 
         return new ModelAndView("usuario/cadastro", "usuario", service.buscarPorId(id));
     }
+
+    // pre edicao de cadastro de usuarios
+    @GetMapping("/editar/dados/usuario/{id}/perfis/{perfis}")
+    public ModelAndView preEditarCadastroDadosPessoais(@PathVariable("id") Long usuarioId,
+                                                       @PathVariable("perfis") Long[] perfisId) {
+
+        Usuario us = service.buscarPorIdEPerfis(usuarioId, perfisId);
+
+        if (us.getPerfis().contains(new Perfil(PerfilTipo.ADMIN.getCod())) &&
+                !us.getPerfis().contains(new Perfil(PerfilTipo.MEDICO.getCod()))){
+
+            return new ModelAndView("usuario/cadastro","usuario", us);
+
+        }else if(us.getPerfis().contains(new Perfil(PerfilTipo.MEDICO.getCod()))){
+            return new ModelAndView("especialidade/especialidade");
+
+        }else if(us.getPerfis().contains(new Perfil(PerfilTipo.PACIENTE.getCod()))){
+
+            ModelAndView model = new ModelAndView("error");
+            model.addObject("status", 403);
+            model.addObject("error", "Área Restrita");
+            model.addObject("message", "Os dados de pacientes são restritos a ele.");
+            return  model;
+
+        }
+        return new ModelAndView("redirect:/u/lista");
+    }
+
+
 
 }
