@@ -1,8 +1,10 @@
 package com.felix.clinicaSecurity.web.controller;
 
+import com.felix.clinicaSecurity.domain.Medico;
 import com.felix.clinicaSecurity.domain.Perfil;
 import com.felix.clinicaSecurity.domain.PerfilTipo;
 import com.felix.clinicaSecurity.domain.Usuario;
+import com.felix.clinicaSecurity.service.MedicoService;
 import com.felix.clinicaSecurity.service.UsuarioService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,9 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioService service;
+
+    @Autowired
+    private MedicoService medicoService;
 
     // abrir cadastro de usuarios (medico/admin/paciente)
     @GetMapping({"/novo/cadastro/usuario"})
@@ -89,7 +94,13 @@ public class UsuarioController {
             return new ModelAndView("usuario/cadastro","usuario", us);
 
         }else if(us.getPerfis().contains(new Perfil(PerfilTipo.MEDICO.getCod()))){
-            return new ModelAndView("especialidade/especialidade");
+
+            Medico medico = medicoService.buscarPoUsuarioId(usuarioId);
+            return medico.hasNotId()
+                    ? new ModelAndView("medico/cadastro", "medico", new Medico(new Usuario(usuarioId)))
+                    : new ModelAndView("medico/cadastro", "medico", medico);
+
+
 
         }else if(us.getPerfis().contains(new Perfil(PerfilTipo.PACIENTE.getCod()))){
 
