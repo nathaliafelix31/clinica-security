@@ -38,4 +38,5 @@ public class MedicoService {
     public Medico buscarPorEmail(String email) {
         return repository.findByUsuarioEmail(email).orElse(new Medico());
     }
+
 }
