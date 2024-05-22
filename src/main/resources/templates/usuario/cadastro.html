@@ -27,26 +27,26 @@
 						<div th:replace="fragments/alert :: alerta-sucesso"></div>
 
 						<form th:action="@{/u/cadastro/salvar}"
-								th:object="${usuario}" method="POST" class="was-validated">
-							
+							  th:object="${usuario}" method="POST" class="was-validated">
+
 							<div class="mb-3">
 								<label for="email">Email</label>
 								<div class="input-group">
 									<div class="input-group-prepend">
-										<span class="input-group-text" 
-												id="validationTooltipUsernamePrepend">@</span>
+										<span class="input-group-text"
+											  id="validationTooltipUsernamePrepend">@</span>
 									</div>
 									<input type="email" class="form-control" id="email"
-										    th:field="*{email}" placeholder="Email"
-										    aria-describedby="validationTooltipUsernamePrepend" required />
+										   th:field="*{email}" placeholder="Email"
+										   aria-describedby="validationTooltipUsernamePrepend" required />
 									<div class="invalid-feedback">Email é requerido.</div>
 								</div>
 							</div>
-							
+
 							<div class="mb-3">
-								<label for="senha">Senha</label> 
+								<label for="senha">Senha</label>
 								<input type="password" class="form-control" id="senha" maxlength="6"
-										th:field="*{senha}" placeholder="Insira sua senha de acesso" required />
+									   th:field="*{senha}" placeholder="Insira sua senha de acesso" required />
 								<div class="invalid-feedback">Senha é requerida para confirmar a operação.</div>
 							</div>
 
@@ -58,25 +58,24 @@
 									<option value="2">Médico</option>
 									<option value="3">Paciente</option>
 								</select>
-
 								<input type="hidden" value="0" name="perfis" />
 								<div class="invalid-feedback">Pelo menos um perfil é requerido.</div>
 							</div>
-							
+
 							<div class="mb-3">
 								<div class="custom-control custom-switch">
-								  <input type="checkbox" class="custom-control-input" 
-								  			th:field="*{ativo}" id="ativo" 
-								  			th:if="${ativo == true ? 'checked=checked' : ''}" />
-								  <label class="custom-control-label" for="ativo">Cadastro Ativo</label>
+									<input type="checkbox" class="custom-control-input"
+										   th:field="*{ativo}" id="ativo"
+										   th:if="${ativo == true ? 'checked=checked' : ''}" />
+									<label class="custom-control-label" for="ativo">Cadastro Ativo</label>
 								</div>
 							</div>
 
-							<input type="hidden" th:field="*{id}"> 
+							<input type="hidden" th:field="*{id}">
 							<div class="form-group row">
 								<div class="col-sm-10">
 									<button type="submit" class="btn btn-primary"
-										data-toggle="tooltip" data-placement="right" title="Salvar">
+											data-toggle="tooltip" data-placement="right" title="Salvar">
 										<i class="fas fa-save"></i>
 									</button>
 								</div>
@@ -94,7 +93,7 @@
 	<script	th:src="~{}" th:fragment="js"></script>
 	<script th:inline="javascript" th:fragment="inlinescript">
 		$('#perfis').ready(function(){
-			var perfis = [[{usuario.perfis}]];
+			var perfis = [[${usuario.perfis}]];
 			$.each(perfis, function(k, v) {
 				$('#perfis option[value="'+ v.id +'"]').attr('selected', 'selected');
 			})

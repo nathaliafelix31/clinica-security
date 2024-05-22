@@ -25,19 +25,19 @@ public class UsuarioService implements UserDetailsService {
 
     @Autowired
     private UsuarioRepository repository;
-
     @Autowired
     private Datatables datatables;
 
     @Transactional (readOnly = true)
     public Usuario buscarPorEmail(String email){
+
         return repository.findByEmail(email);
     }
 
     @Override @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
        Usuario usuario = buscarPorEmail(username);
-        String roles;
+        //String roles;
         return new User(
 
                usuario.getEmail(),

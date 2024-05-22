@@ -62,7 +62,6 @@ public class UsuarioController {
             attr.addFlashAttribute("falha", "Paciente não pode ser Admin e/ou Médico.");
             attr.addFlashAttribute("usuario", usuario);
         } else {
-
             try {
                 service.salvarUsuario(usuario);
                 attr.addFlashAttribute("sucesso", "Operação realizada com sucesso!");
