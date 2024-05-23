@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class MedicoService {
 
@@ -45,4 +47,7 @@ public class MedicoService {
         medico.getEspecialidades().removeIf(e -> e.getId().equals(idEsp));
     }
 
+    @Transactional(readOnly = true)
+    public List<Medico> buscarMedicoPorEspecialidade(String titulo) {
+        return repository.findByMedicosPorEspecialidade(titulo);    }
 }
