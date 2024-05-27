@@ -1,5 +1,6 @@
 package com.felix.clinicaSecurity.web.exception;
 
+import com.felix.clinicaSecurity.config.exception.AcessoNegadoException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,12 +18,12 @@ public class ExcepitionController {
         return model;
     }
 
-   /* @ExceptionHandler(AcessoNegadoException.class)
+    @ExceptionHandler(AcessoNegadoException.class)
     public ModelAndView acessoNegadoException(AcessoNegadoException ex) {
         ModelAndView model = new ModelAndView("error");
         model.addObject("status", 403);
         model.addObject("error", "Operação não pode ser realizada.");
         model.addObject("message", ex.getMessage());
         return model;
-    }*/
+    }
 }

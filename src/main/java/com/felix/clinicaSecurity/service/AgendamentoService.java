@@ -1,5 +1,6 @@
 package com.felix.clinicaSecurity.service;
 
+import com.felix.clinicaSecurity.config.exception.AcessoNegadoException;
 import com.felix.clinicaSecurity.datatables.Datatables;
 import com.felix.clinicaSecurity.datatables.DatatablesColunas;
 import com.felix.clinicaSecurity.domain.Agendamento;
@@ -56,11 +57,17 @@ public class AgendamentoService {
     }
 
     @Transactional(readOnly = false)
-    public void editar(Agendamento agendamento, String username) {
-        Agendamento ag = buscarPorId(agendamento.getId());
+    public void editar(Agendamento agendamento, String email) {
+        Agendamento ag = buscarPorIdEUsuario(agendamento.getId(), email);
         ag.setDataConsulta(agendamento.getDataConsulta());
         ag.setEspecialidade(agendamento.getEspecialidade());
         ag.setHorario(agendamento.getHorario());
         ag.setMedico(agendamento.getMedico());
+    }
+
+    @Transactional(readOnly = true)
+    public Agendamento buscarPorIdEUsuario(Long id, String email) {
+        return repository.findByIdAndPacienteOrMedicoEmail(id, email)
+                .orElseThrow(()-> new AcessoNegadoException("Acesso negado ao usuário: " + email));
     }
 }
