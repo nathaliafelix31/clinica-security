@@ -3,6 +3,7 @@ package com.felix.clinicaSecurity.service;
 import com.felix.clinicaSecurity.datatables.Datatables;
 import com.felix.clinicaSecurity.datatables.DatatablesColunas;
 import com.felix.clinicaSecurity.domain.Perfil;
+import com.felix.clinicaSecurity.domain.PerfilTipo;
 import com.felix.clinicaSecurity.domain.Usuario;
 import com.felix.clinicaSecurity.repository.UsuarioRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -96,6 +97,14 @@ public class UsuarioService implements UserDetailsService {
     @Transactional(readOnly = false)
     public void alterarSenha(Usuario usuario, String senha) {
         usuario.setSenha(new BCryptPasswordEncoder().encode(senha));
+        repository.save(usuario);
+    }
+
+    @Transactional(readOnly = false)
+    public void salvarCadastroPaciente(Usuario usuario) {
+        String crypt = new BCryptPasswordEncoder().encode(usuario.getSenha());
+        usuario.setSenha(crypt);
+        usuario.addPerfil(PerfilTipo.PACIENTE);
         repository.save(usuario);
     }
 }
