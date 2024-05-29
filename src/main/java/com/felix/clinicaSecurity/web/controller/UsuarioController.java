@@ -165,7 +165,4 @@ public class UsuarioController {
         }
         return "redirect:/u/cadastro/realizado";
     }
-    //teste
-
-
 }

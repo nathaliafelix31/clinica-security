@@ -116,5 +116,4 @@ public class UsuarioService implements UserDetailsService {
 
         return repository.findByEmailAndAtivo(email);
     }
-    //teste
 }
