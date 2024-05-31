@@ -6,6 +6,7 @@ import com.felix.clinicaSecurity.domain.PerfilTipo;
 import com.felix.clinicaSecurity.domain.Usuario;
 import com.felix.clinicaSecurity.service.MedicoService;
 import com.felix.clinicaSecurity.service.UsuarioService;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -156,10 +157,10 @@ public class UsuarioController {
 
     // recebe o form da página cadastrar-se
     @PostMapping("/cadastro/paciente/salvar")
-    public String salvarCadastropaciente(Usuario usuario, BindingResult result){
-        try{
+    public String salvarCadastroPaciente(Usuario usuario, BindingResult result) throws MessagingException {
+        try {
             service.salvarCadastroPaciente(usuario);
-        }catch (DataIntegrityViolationException ex){
+        } catch (DataIntegrityViolationException ex) {
             result.reject("email", "Ops... Este e-mail já existe na base de dados.");
             return "cadastrar-se";
         }

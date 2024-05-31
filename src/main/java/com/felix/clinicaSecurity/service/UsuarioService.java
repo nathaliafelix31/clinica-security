@@ -1,11 +1,13 @@
 package com.felix.clinicaSecurity.service;
 
+import com.felix.clinicaSecurity.config.exception.AcessoNegadoException;
 import com.felix.clinicaSecurity.datatables.Datatables;
 import com.felix.clinicaSecurity.datatables.DatatablesColunas;
 import com.felix.clinicaSecurity.domain.Perfil;
 import com.felix.clinicaSecurity.domain.PerfilTipo;
 import com.felix.clinicaSecurity.domain.Usuario;
 import com.felix.clinicaSecurity.repository.UsuarioRepository;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,6 +31,8 @@ public class UsuarioService implements UserDetailsService {
     private UsuarioRepository repository;
     @Autowired
     private Datatables datatables;
+    @Autowired
+    EmailService emailService;
 
     @Transactional (readOnly = true)
     public Usuario buscarPorEmail(String email){
@@ -104,11 +108,13 @@ public class UsuarioService implements UserDetailsService {
     }
 
     @Transactional(readOnly = false)
-    public void salvarCadastroPaciente(Usuario usuario) {
+    public void salvarCadastroPaciente(Usuario usuario) throws MessagingException {
         String crypt = new BCryptPasswordEncoder().encode(usuario.getSenha());
         usuario.setSenha(crypt);
         usuario.addPerfil(PerfilTipo.PACIENTE);
         repository.save(usuario);
+
+        emailDeConfirmacaoDeCadastro(usuario.getEmail());
     }
 
     @Transactional(readOnly = true)
@@ -116,4 +122,19 @@ public class UsuarioService implements UserDetailsService {
 
         return repository.findByEmailAndAtivo(email);
     }
-}
+
+    public void emailDeConfirmacaoDeCadastro(String email) throws MessagingException {
+        String codigo = java.util.Base64.getEncoder().encodeToString(email.getBytes());
+        emailService.enviarPedidoDeConfirmacaoDeCadastro(email, codigo);
+    }
+
+    @Transactional(readOnly = false)
+    public void ativarCadastroPaciente(String codigo) {
+        String email = new String(java.util.Base64.getDecoder().decode(codigo));
+        Usuario usuario = buscarPorEmail(email);
+        if (usuario.hasNotId()) {
+            throw new AcessoNegadoException("Não foi possível ativar seu cadastro. Entre em "
+                    + "contato com o suporte.");
+        }
+        usuario.setAtivo(true);
+    }}
