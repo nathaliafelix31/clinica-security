@@ -7,8 +7,11 @@ import com.felix.clinicaSecurity.domain.Perfil;
 import com.felix.clinicaSecurity.domain.PerfilTipo;
 import com.felix.clinicaSecurity.domain.Usuario;
 import com.felix.clinicaSecurity.repository.UsuarioRepository;
+
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -137,4 +140,17 @@ public class UsuarioService implements UserDetailsService {
                     + "contato com o suporte.");
         }
         usuario.setAtivo(true);
-    }}
+    }
+
+    @Transactional(readOnly = false)
+    public void pedidoRedefinicaoDeSenha(String email) throws MessagingException {
+        Usuario usuario = buscarPorEmailEAtivo(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario " + email + " não encontrado."));
+
+        String verificador = RandomStringUtils.randomAlphanumeric(6);
+
+        usuario.setCodigoVerificador(verificador);
+
+        emailService.enviarPedidoRedefinicaoSenha(email, verificador);
+    }
+}
